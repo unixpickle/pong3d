@@ -1,0 +1,5 @@
+#game-container {
+  position: absolute;
+  left: calc(50% - 240px);
+  top: calc(50% - 160px);
+}
