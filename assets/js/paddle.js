@@ -43,8 +43,10 @@ class Paddle {
   }
 
   bounceBall(ball) {
-    if (ball.x >= this.x - PADDLE_WIDTH / 2 && ball.x <= this.x + PADDLE_WIDTH / 2) {
-      if (ball.y >= this.y - PADDLE_HEIGHT / 2 && ball.y <= this.y + PADDLE_HEIGHT / 2) {
+    if (ball.x >= this.x - PADDLE_WIDTH / 2 - BALL_RADIUS &&
+      ball.x <= this.x + PADDLE_WIDTH / 2 + BALL_RADIUS) {
+      if (ball.y >= this.y - PADDLE_HEIGHT / 2 - BALL_RADIUS &&
+        ball.y <= this.y + PADDLE_HEIGHT / 2 + BALL_RADIUS) {
         if (this.z < TUNNEL_DEPTH / 2) {
           // Back paddle.
           if (ball.z <= TUNNEL_DEPTH + BALL_RADIUS) {
