@@ -14,13 +14,41 @@ class Game {
     this.renderer.domElement.id = 'game-container';
     document.body.appendChild(this.renderer.domElement);
 
-    this._lastTime = performance.now();
+    this.overlay = document.createElement('div');
+    this.overlay.id = 'overlay';
+    this.overlay.onclick = () => this.start();
+    document.body.appendChild(this.overlay);
+
+    this.lastTime = performance.now();
     window.requestAnimationFrame((t) => this._animationFrame(t));
 
+    this.stopped = true;
+    this.stop();
     this._setupMouseEvents();
   }
 
+  stop() {
+    this.stopped = true;
+    this.overlay.style.display = 'block';
+  }
+
+  start() {
+    this.reset();
+    this.stopped = false;
+    this.overlay.style.display = 'none';
+
+    const vel = new THREE.Vector2(Math.random() - 0.5, Math.random() - 0.5);
+    vel.normalize();
+    this.ball.vx = vel.x * 0.2;
+    this.ball.vy = vel.y * 0.2;
+    this.ball.vz = -2;
+  }
+
   step(t) {
+    if (this.stopped) {
+      return;
+    }
+
     this.ball.step(t);
     this.playerPaddle.step(t);
     this.enemyPaddle.step(t);
@@ -35,7 +63,7 @@ class Game {
     this.enemyPaddle.bounceBall(this.ball);
 
     if (this.roundOver()) {
-      this.reset();
+      this.stop();
     }
 
     const scene = new THREE.Scene();
@@ -51,16 +79,6 @@ class Game {
     this.renderer.render(scene, this.camera);
   }
 
-  gotMotion() {
-    if (this.ball.stopped()) {
-      const vel = new THREE.Vector2(this.playerPaddle.x, this.playerPaddle.y);
-      vel.normalize();
-      this.ball.vx = vel.x;
-      this.ball.vy = vel.y;
-      this.ball.vz = -2;
-    }
-  }
-
   roundOver() {
     return this.ball.z > -1 - BALL_RADIUS || this.ball.z < TUNNEL_DEPTH + BALL_RADIUS;
   }
@@ -73,8 +91,8 @@ class Game {
   }
 
   _animationFrame(t) {
-    this.step((t - this._lastTime) / 1000);
-    this._lastTime = t;
+    this.step((t - this.lastTime) / 1000);
+    this.lastTime = t;
     window.requestAnimationFrame((t) => this._animationFrame(t));
   }
 
@@ -85,7 +103,6 @@ class Game {
       const x = PADDLE_MOUSE_X_SCALE * (2 * (e.clientX - box.left) / el.offsetWidth - 1);
       const y = PADDLE_MOUSE_Y_SCALE * (1 - 2 * (e.clientY - box.top) / el.offsetHeight);
       this.playerPaddle.setPosition(x, y);
-      this.gotMotion();
     });
   }
 }
