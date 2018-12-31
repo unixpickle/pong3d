@@ -33,7 +33,6 @@ class Game {
     this.tunnel.bounceBall(this.ball);
     this.playerPaddle.bounceBall(this.ball);
     this.enemyPaddle.bounceBall(this.ball);
-    // TODO: bounce against paddles.
 
     if (this.roundOver()) {
       this.reset();
