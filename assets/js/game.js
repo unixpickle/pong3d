@@ -52,6 +52,7 @@ class Game {
     this.ball.step(t);
     this.playerPaddle.step(t);
     this.enemyPaddle.step(t);
+    this.tunnel.setBallZ(this.ball.z);
 
     this.enemyPaddle.setPosition(
       aiMotion(this.enemyPaddle.x, this.ball.x, t / 1.2),

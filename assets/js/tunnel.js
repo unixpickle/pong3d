@@ -1,6 +1,7 @@
 const TUNNEL_WIDTH = 0.625;
 const TUNNEL_HEIGHT = 0.415;
-const TUNNEL_DEPTH = -7;
+const TUNNEL_DEPTH = -6;
+const BAND_SCALE = 0.99;
 
 class Tunnel {
   constructor() {
@@ -9,10 +10,29 @@ class Tunnel {
     this._object = new THREE.Group();
     this._object.add(this.sides);
     this._object.add(this.topBottom);
+    this._ballZ = -1;
+  }
+
+  setBallZ(z) {
+    this._ballZ = z;
   }
 
   object() {
-    return this._object;
+    const material = new THREE.LineBasicMaterial({ color: 0xaaffaa });
+    const geometry = new THREE.Geometry();
+    geometry.vertices.push(
+      new THREE.Vector3(-TUNNEL_WIDTH * BAND_SCALE, -TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),
+      new THREE.Vector3(TUNNEL_WIDTH * BAND_SCALE, -TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),
+      new THREE.Vector3(TUNNEL_WIDTH * BAND_SCALE, TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),
+      new THREE.Vector3(-TUNNEL_WIDTH * BAND_SCALE, TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),
+      new THREE.Vector3(-TUNNEL_WIDTH * BAND_SCALE, -TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),
+    );
+    const line = new THREE.Line(geometry, material);
+
+    const group = new THREE.Group();
+    group.add(this._object);
+    group.add(line);
+    return group;
   }
 
   bounceBall(ball) {
