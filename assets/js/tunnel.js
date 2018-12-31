@@ -14,6 +14,23 @@ class Tunnel {
   object() {
     return this._object;
   }
+
+  bounceBall(ball) {
+    if (ball.x < -TUNNEL_WIDTH + BALL_RADIUS) {
+      ball.x = -TUNNEL_WIDTH + BALL_RADIUS;
+      ball.vx *= -1;
+    } else if (ball.x > TUNNEL_WIDTH - BALL_RADIUS) {
+      ball.x = TUNNEL_WIDTH - BALL_RADIUS;
+      ball.vx *= -1;
+    }
+    if (ball.y < -TUNNEL_HEIGHT + BALL_RADIUS) {
+      ball.y = -TUNNEL_HEIGHT + BALL_RADIUS;
+      ball.vy *= -1;
+    } else if (ball.y > TUNNEL_HEIGHT - BALL_RADIUS) {
+      ball.y = TUNNEL_HEIGHT - BALL_RADIUS;
+      ball.vy *= -1;
+    }
+  }
 }
 
 function makeTunnelSides() {
