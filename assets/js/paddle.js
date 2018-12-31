@@ -8,6 +8,8 @@ class Paddle {
     this.x = 0;
     this.y = 0;
     this.z = z;
+
+    this.hitTime = 0;
   }
 
   setPosition(x, y) {
@@ -16,7 +18,7 @@ class Paddle {
   }
 
   step(t) {
-    // TODO: this.
+    this.hitTime -= t;
   }
 
   object() {
@@ -34,9 +36,9 @@ class Paddle {
     geometry.computeBoundingSphere();
 
     const material = new THREE.MeshBasicMaterial({
-      color: 0x00ccff,
+      color: 0x33aaff,
       transparent: true,
-      opacity: 0.5,
+      opacity: this.hitTime > 0 ? 0.5 + 2 * this.hitTime : 0.5,
     });
 
     return new THREE.Mesh(geometry, material);
@@ -70,5 +72,6 @@ class Paddle {
     ball.vx = vel.x;
     ball.vy = vel.y;
     ball.vz *= -1;
+    this.hitTime = 0.25;
   }
 }
