@@ -9,7 +9,8 @@ const PADDLE_MOUSE_Y_SCALE = 0.4;
 class Game {
   constructor() {
     this.playerPaddle = new Paddle(-1.0);
-    this.enemyPaddle = new Paddle(-10.0);
+    this.enemyPaddle = new Paddle(TUNNEL_DEPTH);
+    this.tunnel = new Tunnel();
 
     this.camera = new THREE.PerspectiveCamera(45, WIDTH / HEIGHT, 0.1, 20);
     this.renderer = new THREE.WebGLRenderer();
@@ -30,6 +31,7 @@ class Game {
     const scene = new THREE.Scene();
     scene.add(this.enemyPaddle.object());
     scene.add(this.playerPaddle.object());
+    scene.add(this.tunnel.object());
     this.renderer.render(scene, this.camera);
   }
 
