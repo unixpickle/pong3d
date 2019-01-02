@@ -82,8 +82,16 @@ class Game {
     this.renderer.render(scene, this.camera);
   }
 
+  playerWins() {
+    return this.ball.z < TUNNEL_DEPTH + BALL_RADIUS;
+  }
+
+  enemyWins() {
+    return this.ball.z > -1 - BALL_RADIUS;
+  }
+
   roundOver() {
-    return this.ball.z > -1 - BALL_RADIUS || this.ball.z < TUNNEL_DEPTH + BALL_RADIUS;
+    return this.playerWins() || this.enemyWins();
   }
 
   reset() {
