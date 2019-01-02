@@ -1,8 +1,8 @@
 const WIDTH = 480;
 const HEIGHT = 320;
 
-const PADDLE_MOUSE_X_SCALE = 0.6;
-const PADDLE_MOUSE_Y_SCALE = 0.4;
+const PADDLE_MOUSE_X_SCALE = 0.63;
+const PADDLE_MOUSE_Y_SCALE = 0.425;
 
 class Game {
   constructor() {

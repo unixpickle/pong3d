@@ -1,5 +1,6 @@
 const PADDLE_WIDTH = 0.3;
 const PADDLE_HEIGHT = 0.2;
+const PADDLE_SPACE = 0.005;
 const PADDLE_MAX_X = 0.475;
 const PADDLE_MAX_Y = 0.315;
 
@@ -10,6 +11,7 @@ class Paddle {
     this.z = z;
 
     this.hitTime = 0;
+    this.hitQuadrant = 0;
   }
 
   setPosition(x, y) {
@@ -25,9 +27,9 @@ class Paddle {
     const geometry = new THREE.Geometry();
     geometry.vertices.push(
       new THREE.Vector3(this.x - PADDLE_WIDTH / 2, this.y - PADDLE_HEIGHT / 2, this.z),
-      new THREE.Vector3(this.x - PADDLE_WIDTH / 2, this.y + PADDLE_HEIGHT / 2, this.z),
-      new THREE.Vector3(this.x + PADDLE_WIDTH / 2, this.y + PADDLE_HEIGHT / 2, this.z),
-      new THREE.Vector3(this.x + PADDLE_WIDTH / 2, this.y - PADDLE_HEIGHT / 2, this.z),
+      new THREE.Vector3(this.x - PADDLE_WIDTH / 2, this.y - PADDLE_SPACE, this.z),
+      new THREE.Vector3(this.x - PADDLE_SPACE, this.y - PADDLE_SPACE, this.z),
+      new THREE.Vector3(this.x - PADDLE_SPACE, this.y - PADDLE_HEIGHT / 2, this.z),
     );
     geometry.faces.push(
       new THREE.Face3(2, 1, 0),
@@ -35,13 +37,25 @@ class Paddle {
     );
     geometry.computeBoundingSphere();
 
-    const material = new THREE.MeshBasicMaterial({
-      color: 0x33aaff,
-      transparent: true,
-      opacity: this.hitTime > 0 ? 0.5 + 2 * this.hitTime : 0.5,
-    });
+    let objects = new THREE.Group();
+    for (let y = 0; y < 2; ++y) {
+      for (let x = 0; x < 2; ++x) {
+        const quadrant = x + 2 * y;
+        const material = new THREE.MeshBasicMaterial({
+          color: 0x33aaff,
+          transparent: true,
+          opacity: (this.hitTime > 0 && this.hitQuadrant === quadrant
+            ? 0.5 + 2 * this.hitTime
+            : 0.5),
+        });
+        const obj = new THREE.Mesh(geometry, material);
+        obj.position.set(x * (PADDLE_WIDTH / 2 + PADDLE_SPACE),
+          y * (PADDLE_HEIGHT / 2 + PADDLE_SPACE), 0);
+        objects.add(obj);
+      }
+    }
 
-    return new THREE.Mesh(geometry, material);
+    return objects;
   }
 
   bounceBall(ball) {
@@ -73,5 +87,15 @@ class Paddle {
     ball.vy = vel.y;
     ball.vz *= -1;
     this.hitTime = 0.25;
+
+    let x = 0;
+    let y = 0;
+    if (ball.x > this.x) {
+      x = 1;
+    }
+    if (ball.y > this.y) {
+      y = 1;
+    }
+    this.hitQuadrant = x + 2 * y;
   }
 }
