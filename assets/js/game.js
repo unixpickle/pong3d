@@ -4,6 +4,8 @@ const HEIGHT = 320;
 const PADDLE_MOUSE_X_SCALE = 0.63;
 const PADDLE_MOUSE_Y_SCALE = 0.425;
 
+const AI_SLOWDOWN = 1.5;
+
 class Game {
   constructor() {
     this.reset();
@@ -55,8 +57,8 @@ class Game {
     this.tunnel.setBallZ(this.ball.z);
 
     this.enemyPaddle.setPosition(
-      aiMotion(this.enemyPaddle.x, this.ball.x, t / 1.2),
-      aiMotion(this.enemyPaddle.y, this.ball.y, t / 1.2),
+      aiMotion(this.enemyPaddle.x, this.ball.x, t),
+      aiMotion(this.enemyPaddle.y, this.ball.y, t),
     );
 
     this.tunnel.bounceBall(this.ball);
@@ -110,10 +112,10 @@ class Game {
 
 function aiMotion(point, ballPoint, t) {
   let delta = ballPoint - point;
-  if (delta > t) {
-    delta = t;
-  } else if (delta < -t) {
-    delta = -t;
+  if (delta > t / AI_SLOWDOWN) {
+    delta = t / AI_SLOWDOWN;
+  } else if (delta < -t / AI_SLOWDOWN) {
+    delta = -t / AI_SLOWDOWN;
   }
   return point + delta;
 }
