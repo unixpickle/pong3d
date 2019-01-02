@@ -42,7 +42,7 @@ class Paddle {
       for (let x = 0; x < 2; ++x) {
         const quadrant = x + 2 * y;
         const material = new THREE.MeshBasicMaterial({
-          color: 0x33aaff,
+          color: 0xffffff,
           transparent: true,
           opacity: (this.hitTime > 0 && this.hitQuadrant === quadrant
             ? 0.5 + 2 * this.hitTime

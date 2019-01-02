@@ -18,7 +18,7 @@ class Tunnel {
   }
 
   object() {
-    const material = new THREE.LineBasicMaterial({ color: 0xaaffaa });
+    const material = new THREE.LineBasicMaterial({ color: 0x00ff00 });
     const geometry = new THREE.Geometry();
     geometry.vertices.push(
       new THREE.Vector3(-TUNNEL_WIDTH * BAND_SCALE, -TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),
@@ -74,7 +74,7 @@ function makeTunnelSides() {
   );
   geometry.computeBoundingSphere();
 
-  const material = new THREE.MeshBasicMaterial({ color: 0xaaaaaa });
+  const material = new THREE.MeshBasicMaterial({ color: 0x9b59b6 });
 
   return new THREE.Mesh(geometry, material);
 }
@@ -100,7 +100,7 @@ function makeTunnelTopBottom() {
   );
   geometry.computeBoundingSphere();
 
-  const material = new THREE.MeshBasicMaterial({ color: 0xcccccc });
+  const material = new THREE.MeshBasicMaterial({ color: 0xaf7bc5 });
 
   return new THREE.Mesh(geometry, material);
 }

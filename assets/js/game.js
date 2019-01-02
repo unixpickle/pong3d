@@ -13,6 +13,7 @@ class Game {
     this.camera = new THREE.PerspectiveCamera(45, WIDTH / HEIGHT, 0.1, 20);
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize(WIDTH, HEIGHT);
+    this.renderer.setClearColor(0x4d2c5b, 1);
     this.renderer.domElement.id = 'game-container';
     document.body.appendChild(this.renderer.domElement);
 
