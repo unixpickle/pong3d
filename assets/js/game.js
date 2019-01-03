@@ -28,6 +28,7 @@ class Game {
     this.stopped = true;
     this.stop();
     this._setupMouseEvents();
+    this._setupKeyEvents();
   }
 
   stop() {
@@ -57,6 +58,7 @@ class Game {
     this.enemyPaddle.step(t);
     this.tunnel.setBallZ(this.ball.z);
 
+    this._keyUpdatePaddle(t);
     this.enemyPaddle.setPosition(
       aiMotion(this.enemyPaddle.x, this.ball.x, t),
       aiMotion(this.enemyPaddle.y, this.ball.y, t),
@@ -116,6 +118,39 @@ class Game {
       const y = PADDLE_MOUSE_Y_SCALE * (1 - 2 * (e.clientY - box.top) / el.offsetHeight);
       this.playerPaddle.setPosition(x, y);
     });
+  }
+
+  _setupKeyEvents() {
+    const KEY_LEFT = 37;
+    const KEY_UP = 38;
+    const KEY_RIGHT = 39;
+    const KEY_DOWN = 40;
+    this._keyDelta = new THREE.Vector2(0, 0);
+    const codeDelta = (code) => {
+      const res = {};
+      res[KEY_LEFT] = new THREE.Vector2(-1, 0);
+      res[KEY_RIGHT] = new THREE.Vector2(1, 0);
+      res[KEY_DOWN] = new THREE.Vector2(0, -1);
+      res[KEY_UP] = new THREE.Vector2(0, 1);
+      return res[code.toString()] || new THREE.Vector2(0, 0);
+    };
+    const clipDelta = () => {
+      this._keyDelta.x = Math.min(Math.max(this._keyDelta.x, -1), 1);
+      this._keyDelta.y = Math.min(Math.max(this._keyDelta.y, -1), 1);
+    };
+    window.addEventListener('keydown', (e) => {
+      this._keyDelta.add(codeDelta(e.which));
+      clipDelta();
+    });
+    window.addEventListener('keyup', (e) => {
+      this._keyDelta.sub(codeDelta(e.which));
+      clipDelta();
+    });
+  }
+
+  _keyUpdatePaddle(t) {
+    this.playerPaddle.setPosition(this.playerPaddle.x + this._keyDelta.x * t,
+      this.playerPaddle.y + this._keyDelta.y * t);
   }
 }
 
