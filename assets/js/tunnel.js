@@ -88,7 +88,7 @@ function makeTunnelTopBottom() {
 }
 
 function makeTunnelZIndicator() {
-  const material = new THREE.LineBasicMaterial({ color: 0x00ff00 });
+  const material = new THREE.LineBasicMaterial({ color: 0x65bcd4 });
   const geometry = new THREE.Geometry();
   geometry.vertices.push(
     new THREE.Vector3(-TUNNEL_WIDTH * BAND_SCALE, -TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),

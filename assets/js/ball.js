@@ -5,7 +5,7 @@ class Ball {
     this.reset();
     const geometry = new THREE.SphereGeometry(BALL_RADIUS, 32, 32);
     const material = new THREE.MeshPhongMaterial({
-      color: 0x00ff00,
+      color: 0x65bcd4,
       side: THREE.DoubleSide,
       flatShading: true,
     });
