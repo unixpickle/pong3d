@@ -37,7 +37,8 @@ class Paddle {
     );
     geometry.computeBoundingSphere();
 
-    let objects = new THREE.Group();
+    const objects = new THREE.Group();
+    const materials = [];
     for (let y = 0; y < 2; ++y) {
       for (let x = 0; x < 2; ++x) {
         const quadrant = x + 2 * y;
@@ -52,10 +53,17 @@ class Paddle {
         obj.position.set(x * (PADDLE_WIDTH / 2 + PADDLE_SPACE),
           y * (PADDLE_HEIGHT / 2 + PADDLE_SPACE), 0);
         objects.add(obj);
+        materials.push(material);
       }
     }
 
-    return objects;
+    return {
+      object: objects,
+      dispose: () => {
+        geometry.dispose();
+        materials.forEach((m) => m.dispose());
+      },
+    }
   }
 
   bounceBall(ball) {

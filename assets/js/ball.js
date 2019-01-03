@@ -26,6 +26,9 @@ class Ball {
     const material = new THREE.MeshPhongMaterial({ color: 0x00ff00, side: THREE.DoubleSide, flatShading: true });
     const object = new THREE.Mesh(this._sphere, material);
     object.position.set(this.x, this.y, this.z);
-    return object;
+    return {
+      object: object,
+      dispose: () => material.dispose(),
+    };
   }
 }

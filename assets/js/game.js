@@ -73,16 +73,16 @@ class Game {
     }
 
     const scene = new THREE.Scene();
-    scene.add(this.ball.object());
-    scene.add(this.enemyPaddle.object());
-    scene.add(this.playerPaddle.object());
-    scene.add(this.tunnel.object());
+    const obj = this.object();
+    scene.add(obj.object);
 
     var light = new THREE.PointLight(0xffffff, 1);
     light.position.set(0, 0, 10);
     scene.add(light);
 
     this.renderer.render(scene, this.camera);
+
+    obj.dispose();
   }
 
   playerWins() {
@@ -102,6 +102,23 @@ class Game {
     this.playerPaddle = new Paddle(-1.0);
     this.enemyPaddle = new Paddle(TUNNEL_DEPTH);
     this.tunnel = new Tunnel();
+  }
+
+  object() {
+    const children = [this.ball, this.enemyPaddle, this.playerPaddle, this.tunnel];
+    const group = new THREE.Group();
+    const disposes = [];
+    children.forEach((c) => {
+      const obj = c.object();
+      group.add(obj.object);
+      disposes.push(obj.dispose);
+    });
+    return {
+      object: group,
+      dispose: () => {
+        disposes.forEach((f) => f());
+      },
+    };
   }
 
   _animationFrame(t) {

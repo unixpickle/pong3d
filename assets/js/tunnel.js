@@ -32,7 +32,13 @@ class Tunnel {
     const group = new THREE.Group();
     group.add(this._object);
     group.add(line);
-    return group;
+    return {
+      object: group,
+      dispose: () => {
+        geometry.dispose();
+        material.dispose();
+      },
+    };
   }
 
   bounceBall(ball) {
