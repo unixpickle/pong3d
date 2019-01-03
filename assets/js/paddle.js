@@ -6,12 +6,21 @@ const PADDLE_MAX_Y = 0.315;
 
 class Paddle {
   constructor(z) {
-    this.x = 0;
-    this.y = 0;
     this.z = z;
+    this.x = this.y = 0;
 
+    // Used for lighting up part of the paddle after the
+    // ball hits it.
     this.hitTime = 0;
     this.hitQuadrant = 0;
+
+    this.meshes = makePaddleMeshes();
+    this.object = new THREE.Group();
+    this.meshes.forEach((x) => this.object.add(x));
+  }
+
+  reset() {
+    this.setPosition(0, 0);
   }
 
   setPosition(x, y) {
@@ -21,49 +30,14 @@ class Paddle {
 
   step(t) {
     this.hitTime -= t;
-  }
-
-  object() {
-    const geometry = new THREE.Geometry();
-    geometry.vertices.push(
-      new THREE.Vector3(this.x - PADDLE_WIDTH / 2, this.y - PADDLE_HEIGHT / 2, this.z),
-      new THREE.Vector3(this.x - PADDLE_WIDTH / 2, this.y - PADDLE_SPACE, this.z),
-      new THREE.Vector3(this.x - PADDLE_SPACE, this.y - PADDLE_SPACE, this.z),
-      new THREE.Vector3(this.x - PADDLE_SPACE, this.y - PADDLE_HEIGHT / 2, this.z),
-    );
-    geometry.faces.push(
-      new THREE.Face3(2, 1, 0),
-      new THREE.Face3(0, 3, 2),
-    );
-    geometry.computeBoundingSphere();
-
-    const objects = new THREE.Group();
-    const materials = [];
-    for (let y = 0; y < 2; ++y) {
-      for (let x = 0; x < 2; ++x) {
-        const quadrant = x + 2 * y;
-        const material = new THREE.MeshBasicMaterial({
-          color: 0xffffff,
-          transparent: true,
-          opacity: (this.hitTime > 0 && this.hitQuadrant === quadrant
-            ? 0.5 + 2 * this.hitTime
-            : 0.5),
-        });
-        const obj = new THREE.Mesh(geometry, material);
-        obj.position.set(x * (PADDLE_WIDTH / 2 + PADDLE_SPACE),
-          y * (PADDLE_HEIGHT / 2 + PADDLE_SPACE), 0);
-        objects.add(obj);
-        materials.push(material);
+    this.meshes.forEach((x, i) => {
+      x.position.set(this.x, this.y, this.z);
+      if (this.hitQuadrant == i && this.hitTime > 0) {
+        x.material.opacity = 0.5 + this.hitTime * 2;
+      } else {
+        x.material.opacity = 0.5;
       }
-    }
-
-    return {
-      object: objects,
-      dispose: () => {
-        geometry.dispose();
-        materials.forEach((m) => m.dispose());
-      },
-    }
+    });
   }
 
   bounceBall(ball) {
@@ -106,4 +80,37 @@ class Paddle {
     }
     this.hitQuadrant = x + 2 * y;
   }
+}
+
+function makePaddleMeshes() {
+  const vecs = [
+    new THREE.Vector3(-PADDLE_WIDTH / 2, -PADDLE_HEIGHT / 2, 0),
+    new THREE.Vector3(-PADDLE_WIDTH / 2, -PADDLE_SPACE, 0),
+    new THREE.Vector3(-PADDLE_SPACE, -PADDLE_SPACE, 0),
+    new THREE.Vector3(-PADDLE_SPACE, -PADDLE_HEIGHT / 2, 0),
+  ];
+  const meshes = [];
+  for (let y = 0; y < 2; ++y) {
+    for (let x = 0; x < 2; ++x) {
+      const geometry = new THREE.Geometry();
+      geometry.faces.push(
+        new THREE.Face3(2, 1, 0),
+        new THREE.Face3(0, 3, 2),
+      );
+      vecs.forEach((vec) => {
+        geometry.vertices.push(vec.clone().add(new THREE.Vector3(
+          x * (PADDLE_WIDTH / 2 + PADDLE_SPACE),
+          y * (PADDLE_HEIGHT / 2 + PADDLE_SPACE),
+          0,
+        )));
+      });
+      const material = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.5,
+      });
+      meshes.push(new THREE.Mesh(geometry, material));
+    }
+  }
+  return meshes;
 }

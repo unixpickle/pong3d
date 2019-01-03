@@ -5,40 +5,16 @@ const BAND_SCALE = 0.99;
 
 class Tunnel {
   constructor() {
-    this.sides = makeTunnelSides();
-    this.topBottom = makeTunnelTopBottom();
-    this._object = new THREE.Group();
-    this._object.add(this.sides);
-    this._object.add(this.topBottom);
-    this._ballZ = -1;
+    this._ballZ = makeTunnelZIndicator();
+    this._ballZ.position.set(0, 0, -5);
+    this.object = new THREE.Group();
+    this.object.add(this._ballZ);
+    this.object.add(makeTunnelSides());
+    this.object.add(makeTunnelTopBottom());
   }
 
   setBallZ(z) {
-    this._ballZ = z;
-  }
-
-  object() {
-    const material = new THREE.LineBasicMaterial({ color: 0x00ff00 });
-    const geometry = new THREE.Geometry();
-    geometry.vertices.push(
-      new THREE.Vector3(-TUNNEL_WIDTH * BAND_SCALE, -TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),
-      new THREE.Vector3(TUNNEL_WIDTH * BAND_SCALE, -TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),
-      new THREE.Vector3(TUNNEL_WIDTH * BAND_SCALE, TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),
-      new THREE.Vector3(-TUNNEL_WIDTH * BAND_SCALE, TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),
-      new THREE.Vector3(-TUNNEL_WIDTH * BAND_SCALE, -TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),
-    );
-    const line = new THREE.Line(geometry, material);
-
-    const group = new THREE.Group();
-    group.add(this._object);
-    group.add(line);
-    return {
-      object: group,
-      dispose: () => {
-        geometry.dispose();
-        material.dispose();
-      },
-    };
+    this._ballZ.position.set(0, 0, z);
   }
 
   bounceBall(ball) {
@@ -109,4 +85,17 @@ function makeTunnelTopBottom() {
   const material = new THREE.MeshBasicMaterial({ color: 0xaf7bc5 });
 
   return new THREE.Mesh(geometry, material);
+}
+
+function makeTunnelZIndicator() {
+  const material = new THREE.LineBasicMaterial({ color: 0x00ff00 });
+  const geometry = new THREE.Geometry();
+  geometry.vertices.push(
+    new THREE.Vector3(-TUNNEL_WIDTH * BAND_SCALE, -TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),
+    new THREE.Vector3(TUNNEL_WIDTH * BAND_SCALE, -TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),
+    new THREE.Vector3(TUNNEL_WIDTH * BAND_SCALE, TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),
+    new THREE.Vector3(-TUNNEL_WIDTH * BAND_SCALE, TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),
+    new THREE.Vector3(-TUNNEL_WIDTH * BAND_SCALE, -TUNNEL_HEIGHT * BAND_SCALE, this._ballZ),
+  );
+  return new THREE.Line(geometry, material);
 }
